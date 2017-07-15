@@ -12,7 +12,7 @@ import json
 import numpy as np
 
 # read in the healthCodes of interest from demographics training table
-demo_syntable = syn.tableQuery("SELECT * FROM syn10146552")
+demo_syntable = syn.tableQuery("SELECT * FROM syn5713119")
 demo = demo_syntable.asDataFrame()
 healthCodeList = ", ".join( repr(i) for i in demo["healthCode"]) 
 

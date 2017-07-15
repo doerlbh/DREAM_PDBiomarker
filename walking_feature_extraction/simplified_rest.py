@@ -1,6 +1,8 @@
 # simplified_rest.py
 
 # Rest feature extraction for training data: demographics: syn10146552, table: syn10146553
+import sys
+sys.path.insert(0,"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages")
 
 import synapseclient
 # use syn = synapseclient.login() if you've already set up your config file
@@ -10,7 +12,7 @@ import json
 import numpy as np
 
 # read in the healthCodes of interest from demographics training table
-demo_syntable = syn.tableQuery("SELECT * FROM syn10146552")
+demo_syntable = syn.tableQuery("SELECT * FROM syn5713119")
 demo = demo_syntable.asDataFrame()
 healthCodeList = ", ".join( repr(i) for i in demo["healthCode"]) 
 
