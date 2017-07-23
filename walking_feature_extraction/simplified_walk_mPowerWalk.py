@@ -7,12 +7,12 @@ sys.path.insert(0,"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2
 import synapseclient
 # use syn = synapseclient.login() if you've already set up your config file
 syn = synapseclient.login(email="doerlbh@gmail.com", password="12345678", rememberMe=True)
-import pandas as pd
+import pandas as pd 
 import json
 import numpy as np
 
 # read in the healthCodes of interest from demographics training table
-demo_syntable = syn.tableQuery("SELECT * FROM syn10146552")
+demo_syntable = syn.tableQuery("SELECT * FROM syn10146553")
 demo = demo_syntable.asDataFrame()
 healthCodeList = ", ".join( repr(i) for i in demo["healthCode"]) 
 
