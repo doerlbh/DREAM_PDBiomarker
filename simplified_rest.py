@@ -42,7 +42,7 @@ actv_rest_temp = pd.merge(actv_rest, rest_json_files_temp, on="deviceMotion_walk
 
 # move the files after downloading
 import shutil
-for file_handle_id, path in walk_json_files.items():
+for file_handle_id, path in items():
     shutil.move(path, "/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/data")
 
 ####################
