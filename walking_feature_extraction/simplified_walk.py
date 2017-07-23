@@ -6,7 +6,9 @@ sys.path.insert(0,"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2
 
 import synapseclient
 # use syn = synapseclient.login() if you've already set up your config file
-syn = synapseclient.login(email="doerlbh@gmail.com", password="12345678", rememberMe=True)
+# syn = synapseclient.login(email="doerlbh@gmail.com", password="12345678", rememberMe=True)
+syn = synapseclient.login()
+
 import pandas as pd
 import json
 import numpy as np
@@ -37,6 +39,12 @@ actv_walking["deviceMotion_walking_outbound.json.items"] = actv_walking["deviceM
 
 # merge IDs/healthCodes with JSON data
 actv_walk_temp = pd.merge(actv_walking, walk_json_files_temp, on="deviceMotion_walking_outbound.json.items")
+
+# move the files after downloading
+import shutil
+file_map = syn.downloadTableColumns()
+for file_handle_id, path in file_map.items():
+    shutil.move(path, "/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/data")
 
 ####################
 # Feature Extraction
