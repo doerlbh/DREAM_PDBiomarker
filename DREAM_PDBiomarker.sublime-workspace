@@ -7,6 +7,22 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "simplified_walk.py",
+			"settings":
+			{
+				"buffer_size": 3260,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "simplified_rest.py",
+			"settings":
+			{
+				"buffer_size": 3160,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -44,6 +60,7 @@
 	],
 	"file_history":
 	[
+		"/Users/DoerLBH/Downloads/head-over-heels-d11d76478f18b4f345d531d3b1990c7cba1462ff/get_tables.ipynb",
 		"/Users/DoerLBH/Dropbox/Research/Pe'er_DREAM/git",
 		"/Users/DoerLBH/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
 		"/Users/DoerLBH/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings"
@@ -82,8 +99,65 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "simplified_walk.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3260,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1944,
+								1944
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 6.0,
+						"translation.y": 576.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "simplified_rest.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3160,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 524.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
 			]
 		}
 	],
