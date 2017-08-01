@@ -50,8 +50,12 @@ parfor n = 1:size
     s_acc(n) = acc(n,:)*plane1.'/norm(plane1,2);
 end
 
-parfor nb = 3:20
+for nb = 3:20
+    close all;
+    
     for ns = 2:10
+        nb
+        ns
         
         %% generate observation labels
         
@@ -59,7 +63,7 @@ parfor nb = 3:20
         s_obs = ones(size,1);
         s_bins = linspace(min(s_acc), max(s_acc), num_bins+1);
         
-        for t = 1:size
+        parfor t = 1:size
             for b = 1 : num_bins
                 if s_acc(t) > s_bins(b)
                     s_obs(t) = b;
@@ -69,8 +73,8 @@ parfor nb = 3:20
         
         %% generate default transition matrix and emission matrix
         
-        num_stages = 3;
-        default_home_state = 0.95
+        num_stages = ns;
+        default_home_state = 0.95;
         
         trGuess = zeros(num_stages,num_stages);
         for j = 1:num_stages
@@ -89,7 +93,7 @@ parfor nb = 3:20
         
         %% plot obs labels
         
-        figure(1);
+        fig1=figure(1);
         plot(time, acc); hold on
         plot(time, s_acc); hold on
         title(['signal at s = ' num2str(num_stages) ' and b =' num2str(num_bins)]);
@@ -105,8 +109,9 @@ parfor nb = 3:20
         filename = [path 'output/signal-s-' num2str(num_stages) '-b-' num2str(num_bins)];
         saveas(gcf, [filename '.png'],'png');
         saveas(gcf, [filename '.fig']);
+        close(fig1);
         
-        figure(2);
+        fig2=figure(2);
         plot(time, s_obs); hold on
         plot(time, s_acc); hold on
         legend('s-obs','s-acc');
@@ -122,6 +127,7 @@ parfor nb = 3:20
         filename = [path 'output/observation-s-' num2str(num_stages) '-b-' num2str(num_bins)];
         saveas(gcf, [filename '.png'],'png');
         saveas(gcf, [filename '.fig']);
+        close(fig2);
         
         %% train HMM
         
@@ -130,7 +136,7 @@ parfor nb = 3:20
         rng(1);
         [seq,states] = hmmgenerate(size,estTr,estEm);
         
-        figure(3)
+        fig3=figure(3);
         plot(time, s_obs); hold on
         plot(time, s_acc); hold on
         plot(time, states); hold on
@@ -146,8 +152,9 @@ parfor nb = 3:20
         % text(xl,yl2,['num bins =' num2str(num_bins)],'FontSize',12);
         filename = [path 'output/prediction-s-' num2str(num_stages) '-b-' num2str(num_bins) '.png'];
         saveas(gcf, filename,'png');
+        close(fig3);
         
-        figure(4)
+        fig4 = figure(4);
         plot(time, seq); hold on
         legend('seq');
         title(['predicted seq at s = ' num2str(num_stages) ' and b =' num2str(num_bins)]);
@@ -159,9 +166,10 @@ parfor nb = 3:20
         yl2 = yc(1)*0.77+yc(2)*0.23;
         % text(xl,yl1,['num stages =' num2str(num_stages)],'FontSize',12);
         % text(xl,yl2,['num bins =' num2str(num_bins)],'FontSize',12);
-        filename = [path 'output/prediction-s-' num2str(num_stages) '-b-' num2str(num_bins)];
+        filename = [path 'output/predSeq-s-' num2str(num_stages) '-b-' num2str(num_bins)];
         saveas(gcf, [filename '.png'],'png');
         saveas(gcf, [filename '.fig']);
+        close(fig4);
         
     end
 end
