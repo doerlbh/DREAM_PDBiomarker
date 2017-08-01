@@ -62,15 +62,30 @@ parfor t = 1:size
     end
 end
 
+
+%% plot obs labels
+
+figure(1);
+plot(time, acc);
+plot(time, s_acc);
+
+figure(2);
+plot(time, s_obs); hold on
+plot(time, s_acc); hold on
+
+
 %% train HMM
 
 trGuess =[0.95 0.05 0; 0 0.95 0.05; 0.05 0 0.95]; 
 emitGuess = [0.25 0.25 0.25 0.25; 0.25 0.25 0.25 0.25; 0.25 0.25 0.25 0.25]; 
 [estTr,estEm] = hmmtrain(s_obs,trGuess,emitGuess);
 
+rng(1);
+[seq,states] = hmmgenerate(size,estTr,estEm);
 
-%% plot obs labels
-
+figure(3)
 plot(time, s_obs); hold on
 plot(time, s_acc); hold on
+plot(time, states);
+
 % plot();
