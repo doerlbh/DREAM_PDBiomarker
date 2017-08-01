@@ -10,7 +10,7 @@ clear all; close all;
 % path = '/home/sunnylin/Dropbox/Git/DREAM_PDBiomarker/';
 path = '/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/';
 
-pathN = path;
+% pathN = path;
 
 % loc = 'Hyak';
 % loc = 'Hyakqsub';
@@ -102,8 +102,9 @@ parfor nb = 3:20
         yl2 = yc(1)*0.77+yc(2)*0.23;
         % text(xl,yl1,['num stages =' num2str(num_stages)],'FontSize',12);
         % text(xl,yl2,['num bins =' num2str(num_bins)],'FontSize',12);
-        filename = ['signal-s-' num2str(num_stages) '-b-' num2str(num_bins) '.png'];
-        saveas(gcf, filename,'png');
+        filename = [path 'output/signal-s-' num2str(num_stages) '-b-' num2str(num_bins)];
+        saveas(gcf, [filename '.png'],'png');
+        saveas(gcf, [filename '.fig']);
         
         figure(2);
         plot(time, s_obs); hold on
@@ -118,8 +119,9 @@ parfor nb = 3:20
         yl2 = yc(1)*0.77+yc(2)*0.23;
         % text(xl,yl1,['num stages =' num2str(num_stages)],'FontSize',12);
         % text(xl,yl2,['num bins =' num2str(num_bins)],'FontSize',12);
-        filename = ['observation-s-' num2str(num_stages) '-b-' num2str(num_bins) '.png'];
-        saveas(gcf, filename,'png');
+        filename = [path 'output/observation-s-' num2str(num_stages) '-b-' num2str(num_bins)];
+        saveas(gcf, [filename '.png'],'png');
+        saveas(gcf, [filename '.fig']);
         
         %% train HMM
         
@@ -142,8 +144,24 @@ parfor nb = 3:20
         yl2 = yc(1)*0.77+yc(2)*0.23;
         % text(xl,yl1,['num stages =' num2str(num_stages)],'FontSize',12);
         % text(xl,yl2,['num bins =' num2str(num_bins)],'FontSize',12);
-        filename = ['prediction-s-' num2str(num_stages) '-b-' num2str(num_bins) '.png'];
+        filename = [path 'output/prediction-s-' num2str(num_stages) '-b-' num2str(num_bins) '.png'];
         saveas(gcf, filename,'png');
+        
+        figure(4)
+        plot(time, seq); hold on
+        legend('seq');
+        title(['predicted seq at s = ' num2str(num_stages) ' and b =' num2str(num_bins)]);
+        xlabel('t');
+        xc = xlim;
+        xl = xc(1)*0.8+xc(2)*0.2;
+        yc = ylim;
+        yl1 = yc(1)*0.83+yc(2)*0.17;
+        yl2 = yc(1)*0.77+yc(2)*0.23;
+        % text(xl,yl1,['num stages =' num2str(num_stages)],'FontSize',12);
+        % text(xl,yl2,['num bins =' num2str(num_bins)],'FontSize',12);
+        filename = [path 'output/prediction-s-' num2str(num_stages) '-b-' num2str(num_bins)];
+        saveas(gcf, [filename '.png'],'png');
+        saveas(gcf, [filename '.fig']);
         
     end
 end
