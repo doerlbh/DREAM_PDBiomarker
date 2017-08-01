@@ -29,16 +29,48 @@ addpath([path 'jsonlab-master']);
 % addpath([path 'embeddings']);
 
 data = loadjson(test_file,'SimplifyCell',1);
-sum = length(data);
-time = zeros(1,sum);
-acc = zeros(3,sum);
+size = length(data);
+time = zeros(1,size);
+acc = zeros(3,size);
 
-for t = 1:sum
+for t = 1:size
     time(1,t) = data(1,t).timestamp;
     acc(1,t) = data(1,t).x;
     acc(2,t) = data(1,t).y;
     acc(3,t) = data(1,t).z;
 end
 
+acc = acc.';
+time = time.';
+
+plane1 = var(acc);
+s_acc = zeros(size,1);
+s_obs = ones(size,1);
+
+parfor n = 1:size
+    s_acc(n) = acc(n,:)*plane1.'/norm(plane1,2);
+end
+
+num_bins = 4;
+s_bins = linspace(min(s_acc), max(s_acc), num_bins+1);
+
+parfor t = 1:size
+    for b = 1 : num_bins
+        if s_acc(t) > s_bins(b)
+            s_obs(t) = b;
+        end
+    end
+end
+
+%% train HMM
+
+trGuess =[0.95 0.05 0; 0 0.95 0.05; 0.05 0 0.95]; 
+emitGuess = [0.25 0.25 0.25 0.25; 0.25 0.25 0.25 0.25; 0.25 0.25 0.25 0.25]; 
+[estTr,estEm] = hmmtrain(s_obs,trGuess,emitGuess);
 
 
+%% plot obs labels
+
+plot(time, s_obs); hold on
+plot(time, s_acc); hold on
+% plot();
