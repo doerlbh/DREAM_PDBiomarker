@@ -78,7 +78,7 @@ if strcmp(note, 'demo')
 else
     
     files = strsplit(list);
-    ncases = length(files);
+    ncases = length(files)-1;
     data = [];
     
     for n = 1:ncases
