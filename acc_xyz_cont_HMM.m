@@ -22,7 +22,6 @@ loc = 'doerlbh';
 
 addpath(path);
 addpath([path 'jsonlab-master']);
-addpath(pathTestData)
 % addpath([path 'parameters']);
 % addpath([path 'embeddings']);
 
@@ -63,7 +62,9 @@ if strcmp(note, 'demo')
     figN = figure(n);
     plot(time, acc);
     title('signal')
-    filename = [pathOut  '/sig-slices-' num2str(slices)];
+    xlabel(t);
+    legend('x','y','z');
+    filename = [pathOut  '/sig-demo-slices-' num2str(slices)];
     saveas(gcf, [filename '.png'],'png');
     saveas(gcf, [filename '.fig']);
     close(figN);
@@ -78,6 +79,7 @@ else
     
     files = strsplit(list);
     ncases = length(files);
+    data = [];
     
     for n = 1:ncases
         file = files{n};
@@ -97,7 +99,9 @@ else
         figN = figure(n);
         plot(time, acc);
         title('signal')
-        filename = [pathOut  '/sig-slices-' num2str(slices)];
+        xlabel(t);
+        legend('x','y','z');
+        filename = [pathOut  '/sig-case-' num2str(n) '-slices-' num2str(slices)];
         saveas(gcf, [filename '.png'],'png');
         saveas(gcf, [filename '.fig']);
         close(figN);
