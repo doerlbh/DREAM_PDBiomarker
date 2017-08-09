@@ -10,6 +10,7 @@ clear all; close all;
 path = '/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/';
 
 pathTestData = [path 'test_outbound'];
+
 % pathN = path;
 
 % loc = 'Hyak';
@@ -29,8 +30,9 @@ addpath(pathTestData)
 
 system(['mkdir ' path 'output/' date]);
 
-slices = 20;
+slices = 1;
 note = 'test';
+pathOut = [path 'output/' date '/' note]
 
 test_file = 'test_walk_outbound.tmp';
 
@@ -54,7 +56,7 @@ n = 1;
 figN = figure(n);
 plot(time, acc);
 title('signal')
-filename = [path 'output/' date '/sig-slices-' num2str(slices) '-case-' note];
+filename = [pathOut  '/sig-slices-' num2str(slices)];
 saveas(gcf, [filename '.png'],'png');
 saveas(gcf, [filename '.fig']);
 close(figN);
@@ -64,9 +66,6 @@ data = acc;
 
 [sections, data] = sliceStep(data, slices);
 steps = length(data);
-
-
-
 
 %% train HMM
 
@@ -133,7 +132,7 @@ for t=1:T-1
     %  pause(0.1)
 end
 
-filename = [path 'output/' date '/stages-slices-' num2str(slices) '-case-' note];
+filename = [pathOut '/stages-slices-' num2str(slices)];
 saveas(gcf, [filename '.png'],'png');
 saveas(gcf, [filename '.fig']);
 close(fig2);
@@ -153,7 +152,7 @@ for k=1:nstates
 end
 axis_pct
 
-filename = [path 'output/' date '/hidden-slices-' num2str(slices) '-case-' note];
+filename = [pathOut  '/hidden-slices-' num2str(slices)];
 saveas(gcf, [filename '.png'],'png');
 saveas(gcf, [filename '.fig']);
 close(fig3);
@@ -167,12 +166,12 @@ title(['sampled observations']);
 xlabel('t');
 ylabel('observations');
 hold on
-plot(timeObs, observed(1,:));
-plot(timeObs, observed(2,:));
-plot(timeObs, observed(3,:));
+plot(1:T, observed(1,:));
+plot(1:T, observed(2,:));
+plot(1:T, observed(3,:));
 legend('x','y','z');
 
-filename = [path 'output/' date '/obs-slices-' num2str(slices) '-case-' note];
+filename = [pathOut  '/obs-slices-' num2str(slices)];
 saveas(gcf, [filename '.png'],'png');
 saveas(gcf, [filename '.fig']);
 close(fig4);
@@ -207,7 +206,7 @@ for s = 1: steps
     legend('obs_z','data_z');
     xlabel('t');
     
-    filename = [path 'output/' date '/comp-slices-' num2str(slices) '-case-' note];
+    filename = [pathOut '/comp-slices-' num2str(slices) '-s' num2str(s)];
     saveas(gcf, [filename '.png'],'png');
     saveas(gcf, [filename '.fig']);
     close(figS);
