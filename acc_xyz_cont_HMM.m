@@ -46,12 +46,14 @@ time = time.';
 fig1 = figure(1);
 plot(time, acc);
 
+%% train HMM
+
 data = acc.';
 setSeed(0);
 maxIt = 30;
 nRndRest = 10;
 
-nstates = 3;
+nstates = 4;
 
 % only choose x and y
 data = data(1:2,:);
@@ -73,31 +75,73 @@ end
 model = hmmFitEm(data, nstates, 'gauss', 'verbose', true, 'piPrior', ones(1,nstates), ...
     'emissionPrior', prior, 'nRandomRestarts', nRndRest, 'maxIter', maxIt);
 
-T = 100;
+T = 500;
+stptime = zeros(1,T);
+timeObs = zeros(1,T);
+
 [observed, hidden] = hmmSample(model, T, 1);
-figure; hold on
+% figure; 
+
+
+%% plot clustering
+
+fig2 = figure(2); hold on
 [styles, colors, symbols, str] =  plotColors();
+
+for t = 1 : T - 1
+   ndx=hidden(t);
+   rate = model.pi(ndx);
+   tau = log(1/rand()) / rate;
+   stptime(t+1) = tau;
+   timeObs(t+1) = timeObs(t) + tau;
+end
 
 for k=1:nstates
   gaussPlot2d(model.emission.mu(:,k), model.emission.Sigma(:,:,k),...
     'color',colors(k),'plotMarker','false');
-  ndx=(hidden==k);
-  plot(observed(1,ndx), observed(2,ndx), sprintf('%s%s', colors(k), symbols(k)));
+%   ndx=(hidden==k);
+%   plot(observed(1,ndx), observed(2,ndx), sprintf('%s%s', colors(k), symbols(k)));
 end
 
-for t=1:T
+
+for t=1:T-1
   ndx=hidden(t);
   text(observed(1,t), observed(2,t), sprintf('%d', t), ...
     'color', colors(ndx), 'fontsize', 14);
+
+ plot(observed(1,t:t+1),observed(2,t:t+1),'k-','linewidth',1);
+ pause(0.1)
 end
 
-plot(observed(1,:),observed(2,:),'k-','linewidth',1);
+% plot(observed(1,:),observed(2,:),'k-','linewidth',1);
 
-figure; hold on
+%% plot hidden states
+
+% figure; 
+fig3 = figure(3); hold on
 for k=1:nstates
   ndx=find(hidden==k);
   plot(ndx, hidden(ndx), 'o', 'color', colors(k));
 end
 axis_pct
 
+%% plot x and y observed
+
+% figure; 
+fig4 = figure(4);
+hold on
+plot(timeObs, observed(1,:));
+plot(timeObs, observed(2,:));
+legend('x','y');
+
+%% Comparing observed with original datasets
+
+% figure; 
+fig4 = figure(4);
+hold on
+plot(timeObs, observed(1,:));
+plot(timeObs, data(1,1:T));
+plot(timeObs, observed(2,:));
+plot(timeObs, data(2,1:T));
+legend('obs_x','data_x','obs_y','data_y');
 
