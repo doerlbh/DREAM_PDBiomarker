@@ -53,8 +53,8 @@ d = 3;
 nstates = 10;
 
 % debug
-data = data(1:2,:);
-d = 2;
+% data = data(1:2,:);
+% d = 2;
 
 % test with a bogus prior
 if 1
@@ -77,11 +77,13 @@ T = 20;
 figure; hold on
 [styles, colors, symbols, str] =  plotColors();
 
+
 for k=1:K
-    gaussPlot2dImproved(model.emission.mu(:,k), model.emission.Sigma(:,:,k),...
+%     fig2 = figure(k+1);
+    gaussPlot2d(model.emission.mu(:,k), model.emission.Sigma(:,:,k),...
         'color',colors(k),'plotMarker','false');
     ndx=(hidden==k);
-%     plot(observed(1,ndx), observed(2,ndx), sprintf('%s%s', colors(k), symbols(k)));
+    plot(observed(1,ndx), observed(2,ndx), sprintf('%s%s', colors(k), symbols(k)));
 end
 
 for t=1:T
@@ -90,8 +92,10 @@ for t=1:T
         'color', colors(ndx), 'fontsize', 14);
 end
 
-% plot(observed(1,:),observed(2,:),'k-','linewidth',1);
+% fig3 = figure(K+2);
+plot(observed(1,:),observed(2,:),'k-','linewidth',1);
 
+% fig4 = figure(K+3); 
 figure; hold on
 for k=1:K
     ndx=find(hidden==k);
