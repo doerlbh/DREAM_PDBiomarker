@@ -5,7 +5,6 @@
 
 clear all; close all;
 
-
 % path = '/gscratch/stf/sunnylin/Columbia/DREAM_PDBiomarker/';
 % path = '/home/sunnylin/Dropbox/Git/DREAM_PDBiomarker/';
 path = '/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/';
@@ -28,6 +27,11 @@ addpath(pathTestData)
 % addpath([path 'parameters']);
 % addpath([path 'embeddings']);
 
+system(['mkdir ' path 'output/' date]);
+
+slices = 20;
+note = 'test';
+
 test_file = 'test_walk_outbound.tmp';
 
 rawData = loadjson(test_file,'SimplifyCell',1);
@@ -45,13 +49,24 @@ end
 % acc = acc.';
 % time = time.';
 
-fig1 = figure(1);
+ncases = 1;
+n = 1;
+figN = figure(n);
 plot(time, acc);
+title('signal')
+filename = [path 'output/' date '/sig-slices-' num2str(slices) '-case-' note];
+saveas(gcf, [filename '.png'],'png');
+saveas(gcf, [filename '.fig']);
+close(figN);
 
 % data = acc.';
 data = acc;
 
-data = sliceStep(data, 20);
+[sections, data] = sliceStep(data, slices);
+steps = length(data);
+
+
+
 
 %% train HMM
 
@@ -77,17 +92,18 @@ end
 model = hmmFitEm(data, nstates, 'gauss', 'verbose', true, 'piPrior', ones(1,nstates), ...
     'emissionPrior', prior, 'nRandomRestarts', nRndRest, 'maxIter', maxIt);
 
-T = 500;
+T = sections;
 stptime = zeros(1,T);
 timeObs = zeros(1,T);
 
 [observed, hidden] = hmmSample(model, T, 1);
-% figure; 
+% figure;
 
 
 %% plot clustering
 
-fig2 = figure(2); hold on
+fig2 = figure(ncases+1); hold on
+title(['stage characterizations of walking outbound acc']);
 [styles, colors, symbols, str] =  plotColors();
 
 % for t = 1 : T - 1
@@ -99,64 +115,104 @@ fig2 = figure(2); hold on
 % end
 
 for k=1:nstates
-  gaussPlot2d(model.emission.mu(1:2,k), model.emission.Sigma(1:2,1:2,k),...
-    'color',colors(k),'plotMarker','false');
-%   ndx=(hidden==k);
-%   plot(observed(1,ndx), observed(2,ndx), sprintf('%s%s', colors(k), symbols(k)));
+    gaussPlot2d(model.emission.mu(1:2,k), model.emission.Sigma(1:2,1:2,k),...
+        'color',colors(k),'plotMarker','false');
+    xlabel('x');
+    ylabel('y');
+    %   ndx=(hidden==k);
+    %   plot(observed(1,ndx), observed(2,ndx), sprintf('%s%s', colors(k), symbols(k)));
 end
 
 
 for t=1:T-1
-  ndx=hidden(t);
-  text(observed(1,t), observed(2,t), sprintf('%d', t), ...
-    'color', colors(ndx), 'fontsize', 14);
-
- plot(observed(1,t:t+1),observed(2,t:t+1),'k-','linewidth',1);
-%  pause(0.1)
+    ndx=hidden(t);
+    text(observed(1,t), observed(2,t), sprintf('%d', t), ...
+        'color', colors(ndx), 'fontsize', 14);
+    
+    plot(observed(1,t:t+1),observed(2,t:t+1),'k-','linewidth',1);
+    %  pause(0.1)
 end
+
+filename = [path 'output/' date '/stages-slices-' num2str(slices) '-case-' note];
+saveas(gcf, [filename '.png'],'png');
+saveas(gcf, [filename '.fig']);
+close(fig2);
 
 % plot(observed(1,:),observed(2,:),'k-','linewidth',1);
 
 %% plot hidden states
 
-% figure; 
-fig3 = figure(3); hold on
+% figure;
+fig3 = figure(ncases+2); hold on
+title(['hidden states']);
+xlabel('t-sample');
+ylabel('hidden states');
 for k=1:nstates
-  ndx=find(hidden==k);
-  plot(ndx, hidden(ndx), 'o', 'color', colors(k));
+    ndx=find(hidden==k);
+    plot(ndx, hidden(ndx), 'o', 'color', colors(k));
 end
 axis_pct
 
-%% plot x and y observed
+filename = [path 'output/' date '/hidden-slices-' num2str(slices) '-case-' note];
+saveas(gcf, [filename '.png'],'png');
+saveas(gcf, [filename '.fig']);
+close(fig3);
 
-% figure; 
-fig4 = figure(4);
+
+%% plot x, y, z observed
+
+% figure;
+fig4 = figure(ncases+3);
+title(['sampled observations']);
+xlabel('t');
+ylabel('observations');
 hold on
 plot(timeObs, observed(1,:));
 plot(timeObs, observed(2,:));
 plot(timeObs, observed(3,:));
 legend('x','y','z');
 
+filename = [path 'output/' date '/obs-slices-' num2str(slices) '-case-' note];
+saveas(gcf, [filename '.png'],'png');
+saveas(gcf, [filename '.fig']);
+close(fig4);
+
 %% Comparing observed with original datasets
 
-% figure; 
-fig4 = figure(4);
+% figure;
 % hold on
 
-subplot(3,1,1); 
-plot(time(1:T), observed(1,:)); hold on
-plot(time(1:T), data(1,1:T));
-legend('obs_x','data_x');
-
-subplot(3,1,2); 
-plot(time(1:T), observed(2,:)); hold on
-plot(time(1:T), data(2,1:T));
-legend('obs_y','data_y');
-
-subplot(3,1,3); 
-plot(time(1:T), observed(3,:)); hold on
-plot(time(1:T), data(3,1:T));
-legend('obs_z','data_z');
+for s = 1: steps
+    
+    figS = figure(ncases+3+s);
+    title(['observed vs original datasets']);
+    
+    data_sec = data{s};
+    
+    subplot(3,1,1);
+    plot(time(1:T), observed(1,:)); hold on
+    plot(time(1:T), data_sec(1,1:T));
+    legend('obs_x','data_x');
+    xlabel('t');
+    
+    subplot(3,1,2);
+    plot(time(1:T), observed(2,:)); hold on
+    plot(time(1:T), data_sec(2,1:T));
+    legend('obs_y','data_y');
+    xlabel('t');
+    
+    subplot(3,1,3);
+    plot(time(1:T), observed(3,:)); hold on
+    plot(time(1:T), data_sec(3,1:T));
+    legend('obs_z','data_z');
+    xlabel('t');
+    
+    filename = [path 'output/' date '/comp-slices-' num2str(slices) '-case-' note];
+    saveas(gcf, [filename '.png'],'png');
+    saveas(gcf, [filename '.fig']);
+    close(figS);
+    
+end
 
 
 

@@ -3,13 +3,16 @@
 % Columbia University
 % July 2017
 
-dataNew = sliceStep(data, slices);
+function [sections, dataNew] = sliceStep(data, slices);
 
-sec = floor(length(data)/slices)
+size = length(data);
+sections = floor(size/slices);
+
+dataNew = cell(slices,1);
 
 for s = 1 : slices - 1
-      dataNew{s} = data(:,((s-1)*sec+1):s*sec);
+      dataNew{s} = data(:,((s-1)*sections+1):s*sections);
 end
-dataNew{slices} = data(:,((slices-1)*sec+1):end);
+dataNew{slices} = data(:,((slices-1)*sections+1):size);
 
 end
