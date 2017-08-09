@@ -9,8 +9,6 @@ clear all; close all;
 % path = '/home/sunnylin/Dropbox/Git/DREAM_PDBiomarker/';
 path = '/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/';
 
-pathTestData = [path 'test_outbound'];
-
 % pathN = path;
 
 % loc = 'Hyak';
@@ -30,12 +28,18 @@ addpath(pathTestData)
 
 system(['mkdir ' path 'output/' date]);
 
-slices = 1;
-note = 'test-slices-1';
+slices = 20;
+note = 'test-slices-20';
+
+pathTestData = [path 'test_outbound'];
 pathOut = [path 'output/' date '/' note];
 
 system(['mkdir ' pathOut]);
 
+
+[~,list] = system(['find ' pathTestData ' -type f -name "*.tmp"']);
+
+%% for demo
 test_file = 'test_walk_outbound.tmp';
 
 rawData = loadjson(test_file,'SimplifyCell',1);
