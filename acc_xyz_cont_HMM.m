@@ -54,10 +54,11 @@ maxIt = 30;
 nRndRest = 10;
 
 nstates = 4;
+d = 3;
 
-% only choose x and y
-data = data(1:2,:);
-d = 2;
+% % only choose x and y
+% data = data(1:2,:);
+% d = 2;
 
 % test with a bogus prior
 if 1
@@ -97,7 +98,7 @@ for t = 1 : T - 1
 end
 
 for k=1:nstates
-  gaussPlot2d(model.emission.mu(:,k), model.emission.Sigma(:,:,k),...
+  gaussPlot2d(model.emission.mu(1:2,k), model.emission.Sigma(1:2,1:2,k),...
     'color',colors(k),'plotMarker','false');
 %   ndx=(hidden==k);
 %   plot(observed(1,ndx), observed(2,ndx), sprintf('%s%s', colors(k), symbols(k)));
@@ -110,7 +111,7 @@ for t=1:T-1
     'color', colors(ndx), 'fontsize', 14);
 
  plot(observed(1,t:t+1),observed(2,t:t+1),'k-','linewidth',1);
- pause(0.1)
+%  pause(0.1)
 end
 
 % plot(observed(1,:),observed(2,:),'k-','linewidth',1);
@@ -132,16 +133,27 @@ fig4 = figure(4);
 hold on
 plot(timeObs, observed(1,:));
 plot(timeObs, observed(2,:));
-legend('x','y');
+plot(timeObs, observed(3,:));
+legend('x','y','z');
 
 %% Comparing observed with original datasets
 
 % figure; 
 fig4 = figure(4);
-hold on
-plot(timeObs, observed(1,:));
+% hold on
+
+subplot(3,1,1); 
+plot(timeObs, observed(1,:)); hold on
 plot(timeObs, data(1,1:T));
-plot(timeObs, observed(2,:));
+legend('obs_x','data_x');
+
+subplot(3,1,2); 
+plot(timeObs, observed(2,:)); hold on
 plot(timeObs, data(2,1:T));
-legend('obs_x','data_x','obs_y','data_y');
+legend('obs_y','data_y');
+
+subplot(3,1,3); 
+plot(timeObs, observed(3,:)); hold on
+plot(timeObs, data(3,1:T));
+legend('obs_z','data_z');
 
