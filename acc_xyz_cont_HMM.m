@@ -28,50 +28,89 @@ addpath(pathTestData)
 
 system(['mkdir ' path 'output/' date]);
 
-slices = 20;
-note = 'test-slices-20';
+slices = 1;
+note = 'nstates-4-slices-1';
+% note = 'demo';
 
 pathTestData = [path 'test_outbound'];
 pathOut = [path 'output/' date '/' note];
 
 system(['mkdir ' pathOut]);
 
-
 [~,list] = system(['find ' pathTestData ' -type f -name "*.tmp"']);
 
-%% for demo
-test_file = 'test_walk_outbound.tmp';
-
-rawData = loadjson(test_file,'SimplifyCell',1);
-size = length(rawData);
-time = zeros(1,size);
-acc = zeros(3,size);
-
-for t = 1:size
-    time(1,t) = rawData(1,t).timestamp;
-    acc(1,t) = rawData(1,t).x;
-    acc(2,t) = rawData(1,t).y;
-    acc(3,t) = rawData(1,t).z;
+if strcmp(note, 'demo')
+    
+    test_file = 'test_walk_outbound.tmp';
+    
+    rawData = loadjson(test_file,'SimplifyCell',1);
+    size = length(rawData);
+    time = zeros(1,size);
+    acc = zeros(3,size);
+    
+    for t = 1:size
+        time(1,t) = rawData(1,t).timestamp;
+        acc(1,t) = rawData(1,t).x;
+        acc(2,t) = rawData(1,t).y;
+        acc(3,t) = rawData(1,t).z;
+    end
+    
+    % acc = acc.';
+    % time = time.';
+    
+    ncases = 1;
+    n = 1;
+    figN = figure(n);
+    plot(time, acc);
+    title('signal')
+    filename = [pathOut  '/sig-slices-' num2str(slices)];
+    saveas(gcf, [filename '.png'],'png');
+    saveas(gcf, [filename '.fig']);
+    close(figN);
+    
+    % data = acc.';
+    data = acc;
+    
+    [sections, data] = sliceStep(data, slices);
+    steps = length(data);
+    
+else
+    
+    files = strsplit(list);
+    ncases = length(files);
+    
+    for n = 1:ncases
+        file = files{n};
+        
+        rawData = loadjson(file,'SimplifyCell',1);
+        size = length(rawData);
+        time = zeros(1,size);
+        acc = zeros(3,size);
+        
+        for t = 1:size
+            time(1,t) = rawData(1,t).timestamp;
+            acc(1,t) = rawData(1,t).x;
+            acc(2,t) = rawData(1,t).y;
+            acc(3,t) = rawData(1,t).z;
+        end
+        
+        figN = figure(n);
+        plot(time, acc);
+        title('signal')
+        filename = [pathOut  '/sig-slices-' num2str(slices)];
+        saveas(gcf, [filename '.png'],'png');
+        saveas(gcf, [filename '.fig']);
+        close(figN);
+        
+        % data = acc.';
+        dataUncomb = acc;
+        [sections, dataUncomb] = sliceStep(dataUncomb, slices);
+        data = [data; dataUncomb];
+    end
+    
+    steps = length(data);
+    
 end
-
-% acc = acc.';
-% time = time.';
-
-ncases = 1;
-n = 1;
-figN = figure(n);
-plot(time, acc);
-title('signal')
-filename = [pathOut  '/sig-slices-' num2str(slices)];
-saveas(gcf, [filename '.png'],'png');
-saveas(gcf, [filename '.fig']);
-close(figN);
-
-% data = acc.';
-data = acc;
-
-[sections, data] = sliceStep(data, slices);
-steps = length(data);
 
 %% train HMM
 
@@ -135,7 +174,9 @@ for t=1:T-1
         'color', colors(ndx), 'fontsize', 14);
     
     plot(observed(1,t:t+1),observed(2,t:t+1),'k-','linewidth',1);
-    %  pause(0.1)
+    if strcmp(note, 'demo')
+        pause(0.1);
+    end
 end
 
 filename = [pathOut '/stages-slices-' num2str(slices)];
