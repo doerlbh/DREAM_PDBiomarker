@@ -48,11 +48,12 @@ plot(time, acc);
 
 data = acc.';
 setSeed(0);
-K = 2;
-d = 3;
-nstates = 10;
+maxIt = 30;
+nRndRest = 10;
 
-% debug
+nstates = 3;
+
+% only choose x and y
 data = data(1:2,:);
 d = 2;
 
@@ -70,32 +71,33 @@ if 1
 end
 
 model = hmmFitEm(data, nstates, 'gauss', 'verbose', true, 'piPrior', ones(1,nstates), ...
-    'emissionPrior', prior, 'nRandomRestarts', 2, 'maxIter', 5);
+    'emissionPrior', prior, 'nRandomRestarts', nRndRest, 'maxIter', maxIt);
 
-T = 20;
+T = 100;
 [observed, hidden] = hmmSample(model, T, 1);
 figure; hold on
 [styles, colors, symbols, str] =  plotColors();
 
-for k=1:K
-    gaussPlot2dImproved(model.emission.mu(:,k), model.emission.Sigma(:,:,k),...
-        'color',colors(k),'plotMarker','false');
-    ndx=(hidden==k);
-%     plot(observed(1,ndx), observed(2,ndx), sprintf('%s%s', colors(k), symbols(k)));
+for k=1:nstates
+  gaussPlot2d(model.emission.mu(:,k), model.emission.Sigma(:,:,k),...
+    'color',colors(k),'plotMarker','false');
+  ndx=(hidden==k);
+  plot(observed(1,ndx), observed(2,ndx), sprintf('%s%s', colors(k), symbols(k)));
 end
 
 for t=1:T
-    ndx=hidden(t);
-    text(observed(1,t), observed(2,t), sprintf('%d', t), ...
-        'color', colors(ndx), 'fontsize', 14);
+  ndx=hidden(t);
+  text(observed(1,t), observed(2,t), sprintf('%d', t), ...
+    'color', colors(ndx), 'fontsize', 14);
 end
 
-% plot(observed(1,:),observed(2,:),'k-','linewidth',1);
+plot(observed(1,:),observed(2,:),'k-','linewidth',1);
 
 figure; hold on
-for k=1:K
-    ndx=find(hidden==k);
-    plot(ndx, hidden(ndx), 'o', 'color', colors(k));
+for k=1:nstates
+  ndx=find(hidden==k);
+  plot(ndx, hidden(ndx), 'o', 'color', colors(k));
 end
 axis_pct
+
 
