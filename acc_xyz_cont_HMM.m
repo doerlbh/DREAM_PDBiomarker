@@ -73,14 +73,14 @@ if strcmp(note, 'demo')
     data = acc;
     
     [sections, data] = sliceStep(data, slices);
-    steps = length(data);
+    steps = slices;
     
 else
     
     files = strsplit(list);
     ncases = length(files)-1;
     data = [];
-    
+    minsec = 10000000;
     for n = 1:ncases
         file = files{n};
         
@@ -108,10 +108,13 @@ else
         
         % data = acc.';
         dataUncomb = acc;
-        [sections, dataUncomb] = sliceStep(dataUncomb, slices);
+        [secN, dataUncomb] = sliceStep(dataUncomb, slices);
+        if secN < minsec
+            minsec = secN;
+        end
         data = [data; dataUncomb];
     end
-    
+    sections = minsec;
     steps = length(data);
     
 end
@@ -240,19 +243,19 @@ for s = 1: steps
     data_sec = data{s};
     
     subplot(3,1,1);
-    plot(time(1:T), observed(1,:)); hold on
+    plot(time(1:T), observed(1,1:T)); hold on
     plot(time(1:T), data_sec(1,1:T));
     legend('obs_x','data_x');
     xlabel('t');
     
     subplot(3,1,2);
-    plot(time(1:T), observed(2,:)); hold on
+    plot(time(1:T), observed(2,1:T)); hold on
     plot(time(1:T), data_sec(2,1:T));
     legend('obs_y','data_y');
     xlabel('t');
     
     subplot(3,1,3);
-    plot(time(1:T), observed(3,:)); hold on
+    plot(time(1:T), observed(3,1:T)); hold on
     plot(time(1:T), data_sec(3,1:T));
     legend('obs_z','data_z');
     xlabel('t');
