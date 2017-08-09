@@ -31,8 +31,10 @@ addpath(pathTestData)
 system(['mkdir ' path 'output/' date]);
 
 slices = 1;
-note = 'test';
-pathOut = [path 'output/' date '/' note]
+note = 'test-slices-1';
+pathOut = [path 'output/' date '/' note];
+
+system(['mkdir ' pathOut]);
 
 test_file = 'test_walk_outbound.tmp';
 
