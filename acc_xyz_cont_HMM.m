@@ -10,6 +10,7 @@ clear all; close all;
 % path = '/home/sunnylin/Dropbox/Git/DREAM_PDBiomarker/';
 path = '/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/';
 
+pathTestData = [path 'test_outbound'];
 % pathN = path;
 
 % loc = 'Hyak';
@@ -23,32 +24,37 @@ loc = 'doerlbh';
 
 addpath(path);
 addpath([path 'jsonlab-master']);
+addpath(pathTestData)
 % addpath([path 'parameters']);
 % addpath([path 'embeddings']);
 
 test_file = 'test_walk_outbound.tmp';
 
-data = loadjson(test_file,'SimplifyCell',1);
-size = length(data);
+rawData = loadjson(test_file,'SimplifyCell',1);
+size = length(rawData);
 time = zeros(1,size);
 acc = zeros(3,size);
 
 for t = 1:size
-    time(1,t) = data(1,t).timestamp;
-    acc(1,t) = data(1,t).x;
-    acc(2,t) = data(1,t).y;
-    acc(3,t) = data(1,t).z;
+    time(1,t) = rawData(1,t).timestamp;
+    acc(1,t) = rawData(1,t).x;
+    acc(2,t) = rawData(1,t).y;
+    acc(3,t) = rawData(1,t).z;
 end
 
-acc = acc.';
-time = time.';
+% acc = acc.';
+% time = time.';
 
 fig1 = figure(1);
 plot(time, acc);
 
+% data = acc.';
+data = acc;
+
+data = sliceStep(data, 20);
+
 %% train HMM
 
-data = acc.';
 setSeed(0);
 maxIt = 30;
 nRndRest = 10;
@@ -66,11 +72,6 @@ if 1
     prior.Sigma = 0.1*eye(d);
     prior.k = d;
     prior.dof = prior.k + 1;
-% else 
-%     prior.mu = [1 3 5 2 9 7 0 0 0 0 0 0 1];
-%     prior.Sigma = randpd(d) + eye(d);
-%     prior.k = 12;
-%     prior.dof = 15;
 end
 
 model = hmmFitEm(data, nstates, 'gauss', 'verbose', true, 'piPrior', ones(1,nstates), ...
@@ -89,13 +90,13 @@ timeObs = zeros(1,T);
 fig2 = figure(2); hold on
 [styles, colors, symbols, str] =  plotColors();
 
-for t = 1 : T - 1
-   ndx=hidden(t);
-   rate = model.pi(ndx);
-   tau = log(1/rand()) / rate;
-   stptime(t+1) = tau;
-   timeObs(t+1) = timeObs(t) + tau;
-end
+% for t = 1 : T - 1
+%    ndx=hidden(t);
+%    rate = model.pi(ndx);
+%    tau = log(1/rand()) / rate;
+%    stptime(t+1) = tau;
+%    timeObs(t+1) = timeObs(t) + tau;
+% end
 
 for k=1:nstates
   gaussPlot2d(model.emission.mu(1:2,k), model.emission.Sigma(1:2,1:2,k),...
@@ -143,17 +144,19 @@ fig4 = figure(4);
 % hold on
 
 subplot(3,1,1); 
-plot(timeObs, observed(1,:)); hold on
-plot(timeObs, data(1,1:T));
+plot(time(1:T), observed(1,:)); hold on
+plot(time(1:T), data(1,1:T));
 legend('obs_x','data_x');
 
 subplot(3,1,2); 
-plot(timeObs, observed(2,:)); hold on
-plot(timeObs, data(2,1:T));
+plot(time(1:T), observed(2,:)); hold on
+plot(time(1:T), data(2,1:T));
 legend('obs_y','data_y');
 
 subplot(3,1,3); 
-plot(timeObs, observed(3,:)); hold on
-plot(timeObs, data(3,1:T));
+plot(time(1:T), observed(3,:)); hold on
+plot(time(1:T), data(3,1:T));
 legend('obs_z','data_z');
+
+
 
