@@ -3,7 +3,7 @@
 % Columbia University
 % July 2017
 
-function acc_xyz_cont_HMM_resize(slices,)
+function acc_xyz_cont_HMM_resize(note, slices, nstates, resize_length)
 
 clear all; close all;
 
@@ -13,13 +13,11 @@ path = '/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/';
 
 addpath(path);
 addpath([path 'jsonlab-master']);
-% addpath([path 'parameters']);
-% addpath([path 'embeddings']);
 
 system(['mkdir ' path 'output/' date]);
 
-slices = 1;
-note = 'nstates-10-slices-1';
+% slices = 1;
+% note = 'nstates-10-slices-1';
 % note = 'demo';
 
 pathTestData = [path 'test_outbound'];
@@ -34,8 +32,7 @@ system(['mkdir ' pathOut '/comp']);
 
 [~,list] = system(['find ' pathTestData ' -type f -name "*.tmp"']);
 
-
-resize_length = 2000;
+% resize_length = 2000;
 sample_timerange = [71010 71024;
     2795187 2795230;
     225408 225420;
@@ -165,7 +162,7 @@ setSeed(0);
 maxIt = 30;
 nRndRest = 10;
 
-nstates = 10;
+% nstates = 10;
 d = 3;
 
 % % only choose x and y
@@ -195,7 +192,7 @@ T = sections;
 
 fig2 = figure(ncases+1); hold on
 title(['stage characterizations of walking outbound acc']);
-[styles, colors, symbols, str] =  plotColors();
+[~, colors, ~, ~] =  plotColors();
 
 % for t = 1 : T - 1
 %    ndx=hidden(t);
@@ -308,5 +305,5 @@ for s = 1: steps
     
 end
 
-
+end
 
