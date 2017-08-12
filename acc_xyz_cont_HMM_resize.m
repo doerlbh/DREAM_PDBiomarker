@@ -3,22 +3,13 @@
 % Columbia University
 % July 2017
 
+function acc_xyz_cont_HMM_resize(slices,)
+
 clear all; close all;
 
 % path = '/gscratch/stf/sunnylin/Columbia/DREAM_PDBiomarker/';
 % path = '/home/sunnylin/Dropbox/Git/DREAM_PDBiomarker/';
 path = '/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/';
-
-% pathN = path;
-
-% loc = 'Hyak';
-% loc = 'Hyakqsub';
-% loc = 'americano';
-% loc ='galao';
-% loc = 'latte';
-% loc = 'espresso';
-% loc = 'mocha';
-loc = 'doerlbh';
 
 addpath(path);
 addpath([path 'jsonlab-master']);
@@ -138,9 +129,12 @@ else
                         acc(3,newSize) = rawData(1,t).z;
                     end
                 end
-                
-            end
+            end    
+            
         end
+        
+        time = imresize(time, [1 resize_length]);
+        acc = imresize(acc, [3 resize_length]);
         
         figN = figure(n);
         plot(time, acc);
