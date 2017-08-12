@@ -4,6 +4,7 @@
 % July 2017
 
 function acc_xyz_cont_HMM_resize(note, slices, nstates, resize_length)
+% acc_xyz_cont_HMM_resize(note, slices, nstates, resize_length)
 
 clear all; close all;
 
