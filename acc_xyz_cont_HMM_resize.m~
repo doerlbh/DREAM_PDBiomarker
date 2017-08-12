@@ -45,7 +45,7 @@ system(['mkdir ' pathOut '/comp']);
 
 
 resize_length = 2000;
-test_timerange = [71010 71024;
+sample_timerange = [71010 71024;
     2795187 2795230;
     225408 225420;
     354178 354191;
@@ -113,14 +113,54 @@ else
         
         rawData = loadjson(file,'SimplifyCell',1);
         size = length(rawData);
-        time = zeros(1,size);
-        acc = zeros(3,size);
+        %         time = zeros(1,size);
+        %         acc = zeros(3,size);
+        
+        isRecording = 0;
+        newSize = 0;
         
         for t = 1:size
-            time(1,t) = rawData(1,t).timestamp;
-            acc(1,t) = rawData(1,t).x;
-            acc(2,t) = rawData(1,t).y;
-            acc(3,t) = rawData(1,t).z;
+            
+            if rawData(1,t).timestamp > sample_timerange(n,2)
+            if ~isRecording && rawData(1,t).timestamp > sample_timerange(n,1)
+                isRecording = 1;
+                newSize = newSize + 1;
+                time(1,newSize) = rawData(1,t).timestamp;
+                acc(1,newSize) = rawData(1,t).x;
+                acc(2,newSize) = rawData(1,t).y;
+                acc(3,newSize) = rawData(1,t).z;
+            else 
+                    isRecording = 0;
+                else
+                    newSize = newSize + 1;
+                    time(1,newSize) = rawData(1,t).timestamp;
+                    acc(1,newSize) = rawData(1,t).x;
+                    acc(2,newSize) = rawData(1,t).y;
+                    acc(3,newSize) = rawData(1,t).z;
+                end
+                
+            end
+            
+            
+            
+            if ~isRecording && rawData(1,t).timestamp > sample_timerange(n,1)
+                isRecording = 1;
+                newSize = newSize + 1;
+                time(1,newSize) = rawData(1,t).timestamp;
+                acc(1,newSize) = rawData(1,t).x;
+                acc(2,newSize) = rawData(1,t).y;
+                acc(3,newSize) = rawData(1,t).z;
+            else if rawData(1,t).timestamp > sample_timerange(n,2)
+                    isRecording = 0;
+                else
+                    newSize = newSize + 1;
+                    time(1,newSize) = rawData(1,t).timestamp;
+                    acc(1,newSize) = rawData(1,t).x;
+                    acc(2,newSize) = rawData(1,t).y;
+                    acc(3,newSize) = rawData(1,t).z;
+                end
+                
+            end
         end
         
         figN = figure(n);
@@ -210,7 +250,7 @@ for t=1:T-1
     plot(observed(1,t:t+1),observed(2,t:t+1),'k-','linewidth',1);
     pause(0.01);
     if strcmp(note, 'demo')
-%         pause(0.1);
+        %         pause(0.1);
     end
 end
 
