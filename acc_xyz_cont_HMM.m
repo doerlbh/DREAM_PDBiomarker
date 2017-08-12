@@ -27,9 +27,9 @@ addpath([path 'jsonlab-master']);
 
 system(['mkdir ' path 'output/' date]);
 
-slices = 20;
-% note = 'nstates-4-slices-20';
-note = 'demo';
+slices = 1;
+note = 'nstates-10-slices-1';
+% note = 'demo';
 
 pathTestData = [path 'test_outbound'];
 pathOut = [path 'output/' date '/' note];
@@ -37,6 +37,8 @@ pathOut = [path 'output/' date '/' note];
 system(['mkdir ' pathOut]);
 
 [~,list] = system(['find ' pathTestData ' -type f -name "*.tmp"']);
+
+test_timerange = []
 
 if strcmp(note, 'demo')
     
@@ -125,7 +127,7 @@ setSeed(0);
 maxIt = 30;
 nRndRest = 10;
 
-nstates = 4;
+nstates = 10;
 d = 3;
 
 % % only choose x and y
@@ -140,12 +142,12 @@ if 1
     prior.dof = prior.k + 1;
 end
 
-model = hmmFitEm(data, nstates, 'gauss', 'verbose', true, 'piPrior', ones(1,nstates), ...
+model = hmmFitEm(data, nstates, 'gauss', 'verbose', true, 'piPrior', [100 ones(1,nstates-1)], ...
     'emissionPrior', prior, 'nRandomRestarts', nRndRest, 'maxIter', maxIt);
 
 T = sections;
-stptime = zeros(1,T);
-timeObs = zeros(1,T);
+% stptime = zeros(1,T);
+% timeObs = zeros(1,T);
 
 [observed, hidden] = hmmSample(model, T, 1);
 % figure;
@@ -181,8 +183,9 @@ for t=1:T-1
         'color', colors(ndx), 'fontsize', 14);
     
     plot(observed(1,t:t+1),observed(2,t:t+1),'k-','linewidth',1);
+    pause(0.01);
     if strcmp(note, 'demo')
-        pause(0.1);
+%         pause(0.1);
     end
 end
 
