@@ -1,4 +1,5 @@
 % stage characterization with HMM
+% acc_xyz_cont_HMM_resize(note, slices, nstates, resize_length)
 % Baihan Lin
 % Columbia University
 % July 2017
@@ -6,7 +7,7 @@
 function acc_xyz_cont_HMM_resize(note, slices, nstates, resize_length)
 % acc_xyz_cont_HMM_resize(note, slices, nstates, resize_length)
 
-clear all; close all;
+% clear all; close all;
 
 % path = '/gscratch/stf/sunnylin/Columbia/DREAM_PDBiomarker/';
 % path = '/home/sunnylin/Dropbox/Git/DREAM_PDBiomarker/';
@@ -33,6 +34,7 @@ system(['mkdir ' pathOut '/comp']);
 
 [~,list] = system(['find ' pathTestData ' -type f -name "*.tmp"']);
 
+timeAll = [];
 % resize_length = 2000;
 sample_timerange = [71010 71024;
     2795187 2795230;
@@ -51,7 +53,7 @@ sample_timerange = [71010 71024;
     166240 166253;
     112776 112787;
     406465 406478;
-    525549 525561;
+    525549 525556;
     731633 731647];
 
 if strcmp(note, 'demo')
@@ -88,7 +90,7 @@ if strcmp(note, 'demo')
     % data = acc.';
     data = acc;
     
-    [sections, data] = sliceStep(data, slices);
+    [~, data] = sliceStep(data, slices);
     steps = slices;
     
 else
@@ -96,7 +98,7 @@ else
     files = strsplit(list);
     ncases = length(files)-1;
     data = [];
-    minsec = 10000000;
+%     minsec = 10000000;
     for n = 1:ncases
         file = files{n};
         
@@ -119,6 +121,7 @@ else
                 acc(3,newSize) = rawData(1,t).z;
             else if rawData(1,t).timestamp > sample_timerange(n,2)
                     isRecording = 0;
+                    break;
                 else if isRecording
                         newSize = newSize + 1;
                         time(1,newSize) = rawData(1,t).timestamp;
@@ -146,13 +149,14 @@ else
         
         % data = acc.';
         dataUncomb = acc;
+        timeAll = [timeAll; time];
         [secN, dataUncomb] = sliceStep(dataUncomb, slices);
-        if secN < minsec
-            minsec = secN;
-        end
+%         if secN < minsec
+%             minsec = secN;
+%         end
         data = [data; dataUncomb];
     end
-    sections = minsec;
+%     sections = minsec;
     steps = length(data);
     
 end
@@ -181,7 +185,7 @@ end
 model = hmmFitEm(data, nstates, 'gauss', 'verbose', true, 'piPrior', [100 ones(1,nstates-1)], ...
     'emissionPrior', prior, 'nRandomRestarts', nRndRest, 'maxIter', maxIt);
 
-T = sections;
+T = int8(resize_length/slices);
 % stptime = zeros(1,T);
 % timeObs = zeros(1,T);
 
@@ -282,20 +286,20 @@ for s = 1: steps
     data_sec = data{s};
     
     subplot(3,1,1);
-    plot(time(((s-1)*T+1):s*T), observed(1,((s-1)*T+1):s*T)); hold on
-    plot(time(((s-1)*T+1):s*T), data_sec(1,((s-1)*T+1):s*T));
+    plot(timeAll(((s-1)*T+1):s*T), observed(1,1:T)); hold on
+    plot(timeAll(((s-1)*T+1):s*T), data_sec(1,1:T));
     legend('obs_x','data_x');
     xlabel('t');
     
     subplot(3,1,2);
-    plot(time(((s-1)*T+1):s*T), observed(2,((s-1)*T+1):s*T)); hold on
-    plot(time(((s-1)*T+1):s*T), data_sec(2,((s-1)*T+1):s*T));
+    plot(timeAll(((s-1)*T+1):s*T), observed(2,1:T)); hold on
+    plot(timeAll(((s-1)*T+1):s*T), data_sec(2,1:T));
     legend('obs_y','data_y');
     xlabel('t');
     
-    subplot(3,1,3);
-    plot(time(((s-1)*T+1):s*T), observed(3,((s-1)*T+1):s*T)); hold on
-    plot(time(((s-1)*T+1):s*T), data_sec(3,((s-1)*T+1):s*T));
+    subplot(3,1,3);    
+    plot(timeAll(((s-1)*T+1):s*T), observed(3,1:T)); hold on
+    plot(timeAll(((s-1)*T+1):s*T), data_sec(3,1:T));
     legend('obs_z','data_z');
     xlabel('t');
     

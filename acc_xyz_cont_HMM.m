@@ -28,7 +28,7 @@ addpath([path 'jsonlab-master']);
 system(['mkdir ' path 'output/' date]);
 
 slices = 1;
-note = 'nstates-10-slices-1';
+note = 'testNew-nstates-10-slices-1';
 % note = 'demo';
 
 pathTestData = [path 'test_outbound'];
