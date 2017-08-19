@@ -1,34 +1,28 @@
 % stage characterization with HMM
+% acc_xyz_cont_HMM_resize(note, slices, nstates, resize_length)
 % Baihan Lin
 % Columbia University
 % July 2017
 
-clear all; close all;
+% function acc_xyz_cont_HMM_resize_New(note, slices, nstates, resize_length)
+function acc_xyz_cont_HMM_resize_New(note, slices, single_nstates)
+% acc_xyz_cont_HMM_resize(note, slices, nstates)
+
+nstates = single_nstates + 2; % initial state and end state and two cases
+
+% clear all; close all;
 
 % path = '/gscratch/stf/sunnylin/Columbia/DREAM_PDBiomarker/';
 % path = '/home/sunnylin/Dropbox/Git/DREAM_PDBiomarker/';
 path = '/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/';
 
-% pathN = path;
-
-% loc = 'Hyak';
-% loc = 'Hyakqsub';
-% loc = 'americano';
-% loc ='galao';
-% loc = 'latte';
-% loc = 'espresso';
-% loc = 'mocha';
-loc = 'doerlbh';
-
 addpath(path);
 addpath([path 'jsonlab-master']);
-% addpath([path 'parameters']);
-% addpath([path 'embeddings']);
 
 system(['mkdir ' path 'output/' date]);
 
-slices = 1;
-note = 'testNew-nstates-10-slices-1';
+% slices = 1;
+% note = 'nstates-10-slices-1';
 % note = 'demo';
 
 pathTestData = [path 'test_outbound'];
@@ -43,6 +37,7 @@ system(['mkdir ' pathOut '/comp']);
 
 [~,list] = system(['find ' pathTestData ' -type f -name "*.tmp"']);
 
+timeAll = [];
 if strcmp(note, 'demo')
     
     test_file = 'test_walk_outbound.tmp';
@@ -77,7 +72,7 @@ if strcmp(note, 'demo')
     % data = acc.';
     data = acc;
     
-    [sections, data] = sliceStep(data, slices);
+    [~, data] = sliceStep(data, slices);
     steps = slices;
     
 else
@@ -85,11 +80,16 @@ else
     files = strsplit(list);
     ncases = length(files)-1;
     data = [];
-    minsec = 10000000;
+    %     minsec = 10000000;
     for n = 1:ncases
         file = files{n};
         
         rawData = loadjson(file,'SimplifyCell',1);
+        size = length(rawData);
+        %         time = zeros(1,size);
+        %         acc = zeros(3,size);
+        
+        rawData = loadjson(test_file,'SimplifyCell',1);
         size = length(rawData);
         time = zeros(1,size);
         acc = zeros(3,size);
@@ -100,6 +100,9 @@ else
             acc(2,t) = rawData(1,t).y;
             acc(3,t) = rawData(1,t).z;
         end
+        
+        %         time = imresize(time, [1 resize_length]);
+        %         acc = imresize(acc, [3 resize_length]);
         
         figN = figure(n);
         plot(time, acc);
@@ -113,13 +116,14 @@ else
         
         % data = acc.';
         dataUncomb = acc;
-        [secN, dataUncomb] = sliceStep(dataUncomb, slices);
-        if secN < minsec
-            minsec = secN;
-        end
+        timeAll = [timeAll; time];
+        [~, dataUncomb] = sliceStep(dataUncomb, slices);
+        %         if secN < minsec
+        %             minsec = secN;
+        %         end
         data = [data; dataUncomb];
     end
-    sections = minsec;
+    %     sections = minsec;
     steps = length(data);
     
 end
@@ -127,30 +131,30 @@ end
 %% train HMM
 
 setSeed(0);
-maxIt = 30;
-nRndRest = 10;
 
-nstates = 10;
 d = 3;
 
-% % only choose x and y
-% data = data(1:2,:);
-% d = 2;
+pPrior = [1 zeros(1, nstates-1)];
 
-% test with a bogus prior
-if 1
-    prior.mu = ones(1, d);
-    prior.Sigma = 0.1*eye(d);
-    prior.k = d;
-    prior.dof = prior.k + 1;
-end
+emPrior.mu = ones(1, d);
+emPrior.Sigma = 0.1*eye(d);
+emPrior.k = d;
+emPrior.dof = emPrior.k + 1;
 
-model = hmmFitEm(data, nstates, 'gauss', 'verbose', true, 'piPrior', [100 ones(1,nstates-1)], ...
-    'emissionPrior', prior, 'nRandomRestarts', nRndRest, 'maxIter', maxIt);
+trPrior = zeros(nstates, nstates);
+trPrior
 
-T = sections;
-% stptime = zeros(1,T);
-% timeObs = zeros(1,T);
+nRndRest = 10;
+maxIt = 30;
+
+model = hmmFitEmGauss(data, nstates, 'gauss', ...
+    'piPrior', pPrior, ...
+    'emissionPrior', emPrior,...
+    'transPrior', trPrior, ...
+    'nRandomRestarts', nRndRest,...
+    'maxIter', maxIt);
+
+T = int8(resize_length/slices);
 
 [observed, hidden] = hmmSample(model, T, 1);
 % figure;
@@ -160,15 +164,7 @@ T = sections;
 
 fig2 = figure(ncases+1); hold on
 title(['stage characterizations of walking outbound acc']);
-[styles, colors, symbols, str] =  plotColors();
-
-% for t = 1 : T - 1
-%    ndx=hidden(t);
-%    rate = model.pi(ndx);
-%    tau = log(1/rand()) / rate;
-%    stptime(t+1) = tau;
-%    timeObs(t+1) = timeObs(t) + tau;
-% end
+[~, colors, ~, ~] =  plotColors();
 
 for k=1:nstates
     gaussPlot2d(model.emission.mu(1:2,k), model.emission.Sigma(1:2,1:2,k),...
@@ -188,7 +184,7 @@ for t=1:T-1
     plot(observed(1,t:t+1),observed(2,t:t+1),'k-','linewidth',1);
     pause(0.01);
     if strcmp(note, 'demo')
-%         pause(0.1);
+        %         pause(0.1);
     end
 end
 
@@ -249,20 +245,20 @@ for s = 1: steps
     data_sec = data{s};
     
     subplot(3,1,1);
-    plot(time(((s-1)*T+1):s*T), observed(1,((s-1)*T+1):s*T)); hold on
-    plot(time(((s-1)*T+1):s*T), data_sec(1,((s-1)*T+1):s*T));
+    plot(timeAll(((s-1)*T+1):s*T), observed(1,1:T)); hold on
+    plot(timeAll(((s-1)*T+1):s*T), data_sec(1,1:T));
     legend('obs_x','data_x');
     xlabel('t');
     
     subplot(3,1,2);
-    plot(time(((s-1)*T+1):s*T), observed(2,((s-1)*T+1):s*T)); hold on
-    plot(time(((s-1)*T+1):s*T), data_sec(2,((s-1)*T+1):s*T));
+    plot(timeAll(((s-1)*T+1):s*T), observed(2,1:T)); hold on
+    plot(timeAll(((s-1)*T+1):s*T), data_sec(2,1:T));
     legend('obs_y','data_y');
     xlabel('t');
     
     subplot(3,1,3);
-    plot(time(((s-1)*T+1):s*T), observed(3,((s-1)*T+1):s*T)); hold on
-    plot(time(((s-1)*T+1):s*T), data_sec(3,((s-1)*T+1):s*T));
+    plot(timeAll(((s-1)*T+1):s*T), observed(3,1:T)); hold on
+    plot(timeAll(((s-1)*T+1):s*T), data_sec(3,1:T));
     legend('obs_z','data_z');
     xlabel('t');
     
@@ -273,5 +269,5 @@ for s = 1: steps
     
 end
 
-
+end
 
