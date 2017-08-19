@@ -11,6 +11,8 @@ disp('single nstate must be even. Abort if odd.')
 
 nstates = single_nstates + 2; % initial state and end state and two cases
 
+d = 3;
+
 % clear all; close all;
 
 % path = '/gscratch/stf/sunnylin/Columbia/DREAM_PDBiomarker/';
@@ -73,7 +75,7 @@ if strcmp(note, 'demo')
     % data = acc.';
     data = acc;
     
-    [sections, mu, sigma, data] = sliceStep(data, slices);
+    [sections, mu, sigma, data] = sliceStep(data, d, slices);
     steps = slices;
     
 else
@@ -118,7 +120,7 @@ else
         % data = acc.';
         dataUncomb = acc;
         timeAll = [timeAll; time];
-        [sections, mu, sigma, dataUncomb] = sliceStep(dataUncomb, slices);
+        [sections, mu, sigma, dataUncomb] = sliceStep(dataUncomb, d, slices);
         
         %         if secN < minsec
         %             minsec = secN;
@@ -134,8 +136,6 @@ end
 
 setSeed(0);
 
-d = 3;
-
 pPrior = [1 zeros(1, nstates-1)];
 
 % emPrior.mu = ones(1, d);
@@ -143,8 +143,8 @@ pPrior = [1 zeros(1, nstates-1)];
 % emPrior.k = d;
 % emPrior.dof = emPrior.k + 1;
 
-emPrior.mu = [0; mu; 0];
-emPrior.Sigma = diag([0; sigma; 0]);
+emPrior.mu = [zeros(1,d); mu; zeros(1,d)];
+emPrior.Sigma = diag([zeros(1,d); sigma; zeros(1,d)]);
 emPrior.k = d;
 emPrior.dof = emPrior.k + 1;
 
