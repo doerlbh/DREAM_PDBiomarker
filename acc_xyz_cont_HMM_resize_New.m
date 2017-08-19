@@ -73,7 +73,7 @@ if strcmp(note, 'demo')
     % data = acc.';
     data = acc;
     
-    [~, data] = sliceStep(data, slices);
+    [sections, mu, sigma, data] = sliceStep(data, slices);
     steps = slices;
     
 else
@@ -118,7 +118,8 @@ else
         % data = acc.';
         dataUncomb = acc;
         timeAll = [timeAll; time];
-        [~, dataUncomb] = sliceStep(dataUncomb, slices);
+        [sections, mu, sigma, dataUncomb] = sliceStep(dataUncomb, slices);
+        
         %         if secN < minsec
         %             minsec = secN;
         %         end
@@ -137,8 +138,13 @@ d = 3;
 
 pPrior = [1 zeros(1, nstates-1)];
 
-emPrior.mu = ones(1, d);
-emPrior.Sigma = 0.1*eye(d);
+% emPrior.mu = ones(1, d);
+% emPrior.Sigma = 0.1*eye(d);
+% emPrior.k = d;
+% emPrior.dof = emPrior.k + 1;
+
+emPrior.mu = [0; mu; 0];
+emPrior.Sigma = diag([0; sigma; 0]);
 emPrior.k = d;
 emPrior.dof = emPrior.k + 1;
 
@@ -153,7 +159,7 @@ trPrior([single_nstates/2+1 3*single_nstates/2+1 single_nstates+1 ...
     2*single_nstates+1],:) = 2/3*trPrior([single_nstates/2+1 ...
     3*single_nstates/2+1 single_nstates+1 2*single_nstates+1],:);
 trPrior(1,[1 2 single_nstates/2+2 single_nstates+2 3*single_nstates/2+2]) = 1/5;
-trPrior
+% trPrior
 
 nRndRest = 10;
 maxIt = 30;
