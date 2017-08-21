@@ -46,11 +46,11 @@ if strcmp(note, 'demo')
     test_file = 'test_walk_outbound.tmp';
     
     rawData = loadjson(test_file,'SimplifyCell',1);
-    size = length(rawData);
-    time = zeros(1,size);
-    acc = zeros(3,size);
+    datasize = length(rawData);
+    time = zeros(1,datasize);
+    acc = zeros(3,datasize);
     
-    for t = 1:size
+    for t = 1:datasize
         time(1,t) = rawData(1,t).timestamp;
         acc(1,t) = rawData(1,t).x;
         acc(2,t) = rawData(1,t).y;
@@ -88,16 +88,16 @@ else
         file = files{n};
         
         rawData = loadjson(file,'SimplifyCell',1);
-        size = length(rawData);
+        datasize = length(rawData);
         %         time = zeros(1,size);
         %         acc = zeros(3,size);
         
         rawData = loadjson(test_file,'SimplifyCell',1);
-        size = length(rawData);
-        time = zeros(1,size);
-        acc = zeros(3,size);
+        datasize = length(rawData);
+        time = zeros(1,datasize);
+        acc = zeros(3,datasize);
         
-        for t = 1:size
+        for t = 1:datasize
             time(1,t) = rawData(1,t).timestamp;
             acc(1,t) = rawData(1,t).x;
             acc(2,t) = rawData(1,t).y;
@@ -136,15 +136,22 @@ end
 
 setSeed(0);
 
-pPrior = [1 zeros(1, nstates-1)];
+pPrior = [1 zeros(1, nstates-1)].';
+% pPrior = ones(1, nstates);
+% size(pPrior)
 
 % emPrior.mu = ones(1, d);
 % emPrior.Sigma = 0.1*eye(d);
 % emPrior.k = d;
 % emPrior.dof = emPrior.k + 1;
 
-emPrior.mu = [zeros(1,d); mu; zeros(1,d)];
-emPrior.Sigma = diag([zeros(1,d); sigma; zeros(1,d)]);
+% emPrior.mu = [zeros(1,d); mu; zeros(1,d)];
+% emPrior.Sigma = diag([zeros(1,d); sigma; zeros(1,d)]);
+% emPrior.k = d;
+% emPrior.dof = emPrior.k + 1;
+
+emPrior.mu = ones(1, d);
+emPrior.Sigma = 0.1*eye(d);
 emPrior.k = d;
 emPrior.dof = emPrior.k + 1;
 
@@ -159,7 +166,7 @@ trPrior([single_nstates/2+1 3*single_nstates/2+1 single_nstates+1 ...
     2*single_nstates+1],:) = 2/3*trPrior([single_nstates/2+1 ...
     3*single_nstates/2+1 single_nstates+1 2*single_nstates+1],:);
 trPrior(1,[1 2 single_nstates/2+2 single_nstates+2 3*single_nstates/2+2]) = 1/5;
-% trPrior
+% size(trPrior)
 
 nRndRest = 10;
 maxIt = 30;

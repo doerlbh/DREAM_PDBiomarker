@@ -31,9 +31,13 @@ model.type = type;
     'nmix'                      , []);
 
 model.piPrior = rowvec(model.piPrior);
+size(model.transPrior)
+model.transPrior
 if diff(size(model.transPrior))
+    disp('Hi')
     model.transPrior = repmat(rowvec(model.transPrior), nstates, 1);
 end
+
 %%
 switch lower(type)
     case 'gauss'        , initFn = @initGauss;
@@ -74,8 +78,16 @@ for i=1:nobs
 end
 loglik   = loglik + sum(scale); 
 %logprior = log(A(:)+eps)'*(model.transPrior(:)-1) + log(pi(:)+eps)'*(model.piPrior(:)-1);
+
+% size(log(A(:)+eps)')
+% size(model.transPrior(:))
+% size(log(pi(:)+eps)')
+% size(model.piPrior(:));
+
 logprior = log(A(:)+eps)'*(model.transPrior(:)) + log(pi(:)+eps)'*(model.piPrior(:));
+
 loglik   = loglik + logprior;
+
 %% emission component (generic)
 emission        = model.emission; 
 ess             = emission.essFn(emission, stackedData, weights, B);
