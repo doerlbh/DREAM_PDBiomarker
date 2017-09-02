@@ -16,6 +16,14 @@
 			}
 		},
 		{
+			"file": "acc_xyz_cont_HMM_resize_New.m",
+			"settings":
+			{
+				"buffer_size": 7628,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "simplified_rest.py",
 			"settings":
 			{
@@ -99,7 +107,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -115,8 +123,8 @@
 						"selection":
 						[
 							[
-								1944,
-								1944
+								1252,
+								1252
 							]
 						],
 						"settings":
@@ -125,14 +133,45 @@
 							"syntax": "Packages/Python/Python.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 663.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "acc_xyz_cont_HMM_resize_New.m",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 7628,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4151,
+								4151
+							]
+						],
+						"settings":
+						{
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/Objective-C/Objective-C.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2528.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
+					"buffer": 2,
 					"file": "simplified_rest.py",
 					"semi_transient": false,
 					"settings":
@@ -156,7 +195,7 @@
 						"translation.y": 524.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -239,7 +278,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 190.0,
+	"side_bar_width": 272.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
