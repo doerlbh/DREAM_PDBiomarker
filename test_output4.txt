@@ -1,13 +1,6 @@
 /Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-00ed19d7-047d-497e-95f3-da0eb99219f64977704957322393606.tmp
 /Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-00ed19d7-047d-497e-95f3-da0eb99219f64977704957322393606.tmp
 /Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-00ed19d7-047d-497e-95f3-da0eb99219f64977704957322393606.tmp
-/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-00ed19d7-047d-497e-95f3-da0eb99219f64977704957322393606.tmp
-/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-00ed19d7-047d-497e-95f3-da0eb99219f64977704957322393606.tmp
-/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-00ed19d7-047d-497e-95f3-da0eb99219f64977704957322393606.tmp
-/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-1cc6d848-d63c-46a3-a150-5f4d6a740ee96680533707748310755.tmp
-/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-2f6c5f88-e048-4290-b9aa-d29773ea487e4269585026506265516.tmp
-/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-00ed19d7-047d-497e-95f3-da0eb99219f64977704957322393606.tmp
-/Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-00ed19d7-047d-497e-95f3-da0eb99219f64977704957322393606.tmp
 /Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-1cc6d848-d63c-46a3-a150-5f4d6a740ee96680533707748310755.tmp
 /Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-2f6c5f88-e048-4290-b9aa-d29773ea487e4269585026506265516.tmp
 /Users/DoerLBH/Dropbox/git/DREAM_PDBiomarker/test_outbound/accel_walking_outbound.json.items-3885b7dc-6162-4da2-8c49-a66668d21b1d8854351473568428746.tmp
